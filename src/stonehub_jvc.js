@@ -14,7 +14,7 @@ class Stonehub_jvc {
         this.extension_id = 'jvc';
         this.status_refresh_time = 3000;
 
-        this.jvc_refresh_rate = 1000;
+        this.jvc_refresh_rate = 500;
         this.jvc_chat_HTML = "";
         this.jvc_smileys = [[":)","image.jeuxvideo.com/smileys_img/1.gif",16,16],
                             [":snif:","image.jeuxvideo.com/smileys_img/20.gif",16,16],
