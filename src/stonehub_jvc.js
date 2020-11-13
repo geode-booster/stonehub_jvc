@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         stonehub_jvc
 // @namespace    http://tampermonkey.net/
-// @version      1.0
-// @description  retrieve prices from idlescape.xyz and inject it in idlescape inventory
+// @version      1.0.1
+// @description  add some chat features : jvc stickers, jvc smileys and youtube videos directly integrated into Idlescape
 // @author       godi, weld, gamergeo, flo
 // @match        https://idlescape.com/game*
 // @run-at       document-start
@@ -14,7 +14,7 @@ class Stonehub_jvc {
         this.extension_id = 'jvc';
         this.status_refresh_time = 3000;
 
-        this.jvc_refresh_rate = 1000;
+        this.jvc_refresh_rate = 500;
         this.jvc_chat_HTML = "";
         this.jvc_smileys = [[":)","image.jeuxvideo.com/smileys_img/1.gif",16,16],
                             [":snif:","image.jeuxvideo.com/smileys_img/20.gif",16,16],
@@ -181,19 +181,19 @@ Stonehub_jvc.prototype.jvc_main = function(that) {
     that.jvc_chat_HTML = document.getElementsByClassName("chat-message-container-box")[0].children[3].children[0].children[0].children;
     [...that.jvc_chat_HTML].forEach(node => {
         that.jvc_parse_stickers(that, node);
-        that.jvc_parse_youtube(that, node);
+//         that.jvc_parse_youtube(that, node);
         that.jvc_parse_smileys(that, node);
     });
 }
 
 Stonehub_jvc.prototype.jvc_parse_stickers = function(that, node) {
     // Add jvc stickers videos inside chatbox when linked
-    if(node.textContent.includes("image.noelshack.com")){
+    if(node.textContent.includes("image.noelshack.com/fichiers/")){
         let links = node.children[0].children[1].children;
         [...links].forEach(l => {
-            if(l.innerHTML.includes("image.noelshack.com")){
+            if(l.innerHTML.includes("image.noelshack.com/fichiers/")){
                 let img_url = l.innerHTML;
-                l.outerHTML = '<img src="' + img_url + '" alt="sticker" width="32" height="24">';
+                l.outerHTML = '<a href="' + img_url + '" target="_blank"><img src="' + img_url + '" alt="sticker" width="32" height="24"><\a>';
             }
         });
     }
@@ -228,29 +228,4 @@ Stonehub_jvc.prototype.jvc_parse_smileys = function(that, node) {
 }
 
 let s = new Stonehub_jvc(); s.start()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
