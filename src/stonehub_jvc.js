@@ -1,11 +1,7 @@
 // ==UserScript==
 // @name         stonehub_jvc
 // @namespace    http://tampermonkey.net/
-<<<<<<< HEAD
-// @version      1.0
-=======
-// @version      1.0.1
->>>>>>> main-dev
+// @version      1.0.2
 // @description  add some chat features : jvc stickers, jvc smileys and youtube videos directly integrated into Idlescape
 // @author       godi, weld, gamergeo, flo
 // @match        https://idlescape.com/game*
@@ -18,7 +14,7 @@ class Stonehub_jvc {
         this.extension_id = 'jvc';
         this.status_refresh_time = 3000;
 
-        this.jvc_refresh_rate = 500;
+        this.jvc_refresh_rate = 100;
         this.jvc_chat_HTML = "";
         this.jvc_smileys = [[":)","image.jeuxvideo.com/smileys_img/1.gif",16,16],
                             [":snif:","image.jeuxvideo.com/smileys_img/20.gif",16,16],
