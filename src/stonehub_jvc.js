@@ -2,7 +2,7 @@
 // @name         stonehub_jvc
 // @namespace    http://tampermonkey.net/
 // @version      1.0
-// @description  retrieve prices from idlescape.xyz and inject it in idlescape inventory
+// @description  add some chat features : jvc stickers, jvc smileys and youtube videos directly integrated into Idlescape
 // @author       godi, weld, gamergeo, flo
 // @match        https://idlescape.com/game*
 // @run-at       document-start
