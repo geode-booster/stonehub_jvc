@@ -8,12 +8,28 @@
 // @run-at       document-start
 // ==/UserScript==
 
+class Smiley {
+    constructor(shortcut, imgLink, width, height) {
+        this.shortcut = shortcut;
+        this.imgLink = imgLink;
+        this.width = width;
+        this.height = height;
+    }
+}
+
 class App_constants {
     static extension_id = 'jvc';
     static status_refresh_time = 3000;
     static refresh_rate = 50;
-    static get_chat_message_container_box = () => document.getElementsByClassName('chat-message-container-box')[0].children[3].children[0].children[0].children;
-    static get_stonehub_status = () => document.getElementById('stonehub_status');
+
+    static get_chat_message_container_box() {
+        return document.getElementsByClassName('chat-message-container-box')[0]?.children[3]?.children[0]?.children[0]?.children ?? [];
+    }
+
+    static get_stonehub_status() {
+        return document.getElementById('stonehub_status');
+    }
+
     static noelshack_uri = 'image.noelshack.com/fichiers/';
     static smiley_list = [
         new Smiley(':)', 'image.jeuxvideo.com/smileys_img/1.gif', 16, 16),
@@ -98,18 +114,8 @@ class App_constants {
     ];
 }
 
-class Smiley {
-    constructor(shortcut, imgLink, width, height) {
-        this.shortcut = shortcut;
-        this.imgLink = imgLink;
-        this.width = width;
-        this.height = height;
-    }
-}
-
 class Stonehub_jvc {
     constructor() {
-        this.jvc_chat_HTML = '';
         this.status_div;
         this.activated_extensions = {
             stonehub: false,
@@ -194,11 +200,10 @@ Stonehub_jvc.prototype.youtube_parser = function (url) {
 
 Stonehub_jvc.prototype.jvc_main = function (that) {
     // This function is called every "refreshRate" seconds
-    that.jvc_chat_HTML = App_constants.get_chat_message_container_box();
-    [...that.jvc_chat_HTML].forEach((node) => {
-        that.jvc_parse_stickers(that, node);
+    [...App_constants.get_chat_message_container_box()].forEach((node) => {
+        that.jvc_parse_stickers(node);
         //         that.jvc_parse_youtube(that, node);
-        that.jvc_parse_smileys(that, node);
+        that.jvc_parse_smileys(node);
     });
 };
 
