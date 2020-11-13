@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         stonehub_jvc
 // @namespace    http://tampermonkey.net/
-// @version      1.0.3
+// @version      1.0.4
 // @description  add some chat features : jvc stickers, jvc smileys and youtube videos directly integrated into Idlescape
 // @author       godi, weld, gamergeo, flo
 // @match        https://idlescape.com/game*
@@ -219,8 +219,9 @@ Stonehub_jvc.prototype.jvc_parse_smileys = function(that, node) {
         if(msg_content.includes(":")){
             for(let i = 0; i < that.jvc_smileys.length; i++) {
                 let s = that.jvc_smileys[i]
-                if(msg_content.includes(s[0])){
+                while(msg_content.includes(s[0])){
                     node.innerHTML = node.innerHTML.replace(s[0], '<img src="https://' + s[1] + '" alt="smiley" width="' + s[2] + '" height="' + s[3] + '">');
+                    msg_content = node.textContent.substring(node.textContent.indexOf("]: ")+3)
                 }
             }
         }
