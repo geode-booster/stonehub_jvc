@@ -115,6 +115,13 @@ class App_constants {
         new Smiley(':pave:', 'image.jeuxvideo.com/smileys_img/pave.gif', 51, 43),
         new Smiley(':objection:', 'image.jeuxvideo.com/smileys_img/objection.gif', 54, 34),
         new Smiley(':siffle:', 'image.jeuxvideo.com/smileys_img/siffle.gif', 22, 16),
+        new Smiley(':ahi:', 'image.noelshack.com/fichiers/2017/50/7/1513505533-ahi.png', 32, 24),
+        new Smiley(':aya:', 'image.noelshack.com/fichiers/2017/16/1492786802-risitas.png', 32, 24),
+        new Smiley(':nez:', 'image.noelshack.com/fichiers/2018/13/4/1522325846-jesusopti.png', 32, 24),
+        new Smiley(':stonks:', 'image.noelshack.com/fichiers/2017/19/1494703855-dq7io4w.png', 32, 24),
+        new Smiley(':reset:', 'image.noelshack.com/fichiers/2019/32/2/1565079872-depositphotos-31633259-stock-photo-reset-button.jpg', 32, 24),
+        new Smiley(':alerte:', 'image.noelshack.com/fichiers/2017/30/4/1501186458-risitalarmebestreup.gif', 32, 24),
+        new Smiley(':geode:', 'image.noelshack.com/fichiers/2020/46/1/1604884970-211148-full.png', 32, 24),
     ];
 }
 
