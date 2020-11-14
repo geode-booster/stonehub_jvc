@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         stonehub_jvc
 // @namespace    http://tampermonkey.net/
-// @version      1.1.1
+// @version      1.1.2
 // @description  add some chat features : jvc stickers, jvc smileys and youtube videos directly integrated into Idlescape
 // @author       godi, weld, gamergeo, flo, jiggyjinjo
 // @match        https://idlescape.com/game*
@@ -118,7 +118,7 @@ class App_constants {
         new Smiley(':ahi:', 'image.noelshack.com/fichiers/2017/50/7/1513505533-ahi.png', 32, 24),
         new Smiley(':aya:', 'image.noelshack.com/fichiers/2017/16/1492786802-risitas.png', 32, 24),
         new Smiley(':nez:', 'image.noelshack.com/fichiers/2018/13/4/1522325846-jesusopti.png', 32, 24),
-        new Smiley(':stonks:', 'image.noelshack.com/fichiers/2017/19/1494703855-dq7io4w.png', 32, 24),
+        new Smiley(':stonks:', 'image.noelshack.com/fichiers/2020/44/5/1604080134-lelite-francaise-a-nen-point-douter.png', 32, 24),
         new Smiley(':reset:', 'image.noelshack.com/fichiers/2019/32/2/1565079872-depositphotos-31633259-stock-photo-reset-button.jpg', 32, 24),
         new Smiley(':alerte:', 'image.noelshack.com/fichiers/2017/30/4/1501186458-risitalarmebestreup.gif', 32, 24),
         new Smiley(':geode:', 'image.noelshack.com/fichiers/2020/46/1/1604884970-211148-full.png', 32, 24),
