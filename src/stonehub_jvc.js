@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         stonehub_jvc
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.1.1
 // @description  add some chat features : jvc stickers, jvc smileys and youtube videos directly integrated into Idlescape
 // @author       godi, weld, gamergeo, flo, jiggyjinjo
 // @match        https://idlescape.com/game*
