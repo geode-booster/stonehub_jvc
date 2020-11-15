@@ -4,7 +4,7 @@
 // @version      1.1.2
 // @description  add some chat features : jvc stickers, jvc smileys and youtube videos directly integrated into Idlescape
 // @author       godi, weld, gamergeo, flo, jiggyjinjo
-// @match        https://idlescape.com/game*
+// @include      *://*idlescape.com/game*
 // @run-at       document-start
 // @grant        none
 // ==/UserScript==
@@ -24,6 +24,7 @@ class App_constants {
     static refresh_rate = 300;
     static chatbox = "";
     static chat_window = "";
+    static event_listener = false;
 
     static get_chat_message_container_box() {
         const index = Array.from(document.getElementsByClassName('chat-tab-channel')).findIndex((e) => e.innerText.includes('1825'));
@@ -122,6 +123,7 @@ class App_constants {
         new Smiley(':reset:', 'image.noelshack.com/fichiers/2019/32/2/1565079872-depositphotos-31633259-stock-photo-reset-button.jpg', 32, 24),
         new Smiley(':alerte:', 'image.noelshack.com/fichiers/2017/30/4/1501186458-risitalarmebestreup.gif', 32, 24),
         new Smiley(':geode:', 'image.noelshack.com/fichiers/2020/46/1/1604884970-211148-full.png', 32, 24),
+        new Smiley(':bras:', 'image.noelshack.com/fichiers/2016/26/1467335935-jesus1.png', 32, 24),
     ];
 }
 
@@ -148,7 +150,6 @@ class Stonehub_jvc {
 
         /* src: https://stackoverflow.com/questions/59915987/get-active-websockets-of-a-website-possible */
         /* Handle the current running socket */
-        console.log("On récupère les sockets");
         const nativeWebSocket = window.WebSocket;
         window.WebSocket = function(...args){
             const socket = new nativeWebSocket(...args);
@@ -288,7 +289,7 @@ Stonehub_jvc.prototype.jvc_hook_windowed_option = function (that) {
 Stonehub_jvc.prototype.jvc_create_windowed_chat = function (that) {
     App_constants.chat_window = window.open('', '_blank', 'toolbar=0,location=0,menubar=0');
     try{
-        App_constants.chat_window.document.head.innerHTML = document.head.innerHTML
+        App_constants.chat_window.document.head.innerHTML = document.head.innerHTML + `<style> body {background-color: #000000;}</style>`;
         let hHTML = App_constants.chat_window.document.head
         if(hHTML.innerHTML.includes('href="/')){
             hHTML.innerHTML = hHTML.innerHTML.replaceAll('href="/', 'href="https://idlescape.com/');
@@ -300,17 +301,15 @@ Stonehub_jvc.prototype.jvc_create_windowed_chat = function (that) {
         bHTML.innerHTML = bHTML.innerHTML.replaceAll('src="images/' , 'src="https://idlescape.com/images/');
         App_constants.chat_window.document.head.children[26].textContent = "Channel 1825 - L'élite de la nation";
         App_constants.chat_window.document.head.children[35].textContent += '.chat-item { height: 22px;}'
-        let msg_main = App_constants.get_chat_message_container_box().children[0].children[0].children;
-        [...msg_main].forEach((node) => {
-            node.attributes["windowed"]=true;
-        });
         let dummy_div = App_constants.chat_window.document.createElement('div')
         App_constants.chat_window.document.body.children[0].children[0].appendChild(dummy_div);
-        let msg_windowed = App_constants.chat_window.document.body.children[0].children[0].children;
-        [...msg_windowed].forEach((node) => {
-            that.jvc_parse_smileys(node);
-            that.jvc_parse_stickers(node);
-        });
+        let msg_windowed = App_constants.chat_window.document.body.children[0].children[0];
+        for(let i = 0; i < msg_windowed.children.length; i++){
+            msg_windowed.insertBefore(msg_windowed.lastChild, msg_windowed.children[i]);
+            that.jvc_parse_smileys(msg_windowed.children[i]);
+            that.jvc_parse_stickers(msg_windowed.children[i]);
+        }
+        App_constants.chat_window.document.body.insertBefore(App_constants.chat_window.document.body.children[1],App_constants.chat_window.document.body.children[0]);
         App_constants.chat_window.document.getElementsByClassName('chat-message-entry-input')[0].addEventListener('keypress', function (e) {
             if ("Enter" === e.key) {
                 msg = App_constants.chat_window.document.getElementsByClassName('chat-message-entry-input')[0];
@@ -319,33 +318,25 @@ Stonehub_jvc.prototype.jvc_create_windowed_chat = function (that) {
                 msg.value="";
             }
         });
-
-        let append_timer = setInterval(() => {
-            try {
-                that.jvc_append_to_window(that);
-            } catch (e) {
-                console.log(e.message);
-                clearInterval(append_timer);
-                App_constants.chat_window.close();
-            }
-        }, App_constants.refresh_rate);
+        if(! that.event_listener) {that.event_listener = true; that.sockets[0].addEventListener('message', (e) => {
+            if(! e.data.includes("send message")) {return; }
+            let msg = e.data;
+            msg = (msg.match(/^[0-9]+(\[.+)$/) || [])[1];
+            let msg_parsed = JSON.parse(msg);
+            if(msg_parsed[0]!=="send message" || msg_parsed[1]["channel_name"]!=="1825") { return;}
+            that.jvc_append_to_window(that, e)
+        })};
     } catch (e) {console.log(e.message);}
 }
 
-Stonehub_jvc.prototype.jvc_append_to_window = function (that) {
-    let msg_windowed = App_constants.chat_window.document.body.children[0].children[0];
-    let msg_main = App_constants.get_chat_message_container_box().children[0].children[0].children;
-    [...msg_main].forEach((node) => {
-        if(! node.attributes["windowed"]){
-            node.attributes["windowed"]=true;
-            let new_msg = document.createElement('div');
-            new_msg.innerHTML = node.innerHTML.replaceAll('src="images/' , 'src="https://idlescape.com/images/');;
-            msg_windowed.insertBefore(new_msg, msg_windowed.lastChild.nextSibling);
-            that.jvc_parse_smileys(new_msg);
-            that.jvc_parse_stickers(new_msg);
-            App_constants.chat_window.scrollTo(0,App_constants.chat_window.document.body.scrollHeight)
-        }
-    });
+Stonehub_jvc.prototype.jvc_append_to_window = function (that, e) {
+    let msg_windowed = App_constants.chat_window.document.body.children[1].children[0];
+    let node = App_constants.get_chat_message_container_box().children[0].children[0].lastChild;
+    let new_msg = document.createElement('div');
+    new_msg.innerHTML = node.innerHTML.replaceAll('src="images/' , 'src="https://idlescape.com/images/');;
+    msg_windowed.insertBefore(new_msg, msg_windowed.firstChild);
+    that.jvc_parse_smileys(new_msg);
+    that.jvc_parse_stickers(new_msg);
 }
 
 try {
