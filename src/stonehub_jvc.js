@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         stonehub_jvc
 // @namespace    http://tampermonkey.net/
-// @version      1.1.4
+// @version      1.1.5
 // @description  add some chat features : jvc stickers, jvc smileys and youtube videos directly integrated into Idlescape
 // @author       godi, weld, gamergeo, flo, jiggyjinjo
 // @include      *://*idlescape.com/game*
@@ -300,7 +300,7 @@ Stonehub_jvc.prototype.jvc_create_windowed_chat = function (that) {
         bHTML.innerHTML = bHTML.innerHTML.replace('<div class="chat-message-entry-char-count">500</div>','');
         bHTML.innerHTML = bHTML.innerHTML.replaceAll('src="images/' , 'src="https://idlescape.com/images/');
         App_constants.chat_window.document.head.children[26].textContent = "Channel 1825 - L'élite de la nation";
-        App_constants.chat_window.document.head.children[35].textContent += '.chat-item { height: 22px;}'
+        App_constants.chat_window.document.head.children[34].textContent += '.chat-item { height: 22px;}'
         let dummy_div = App_constants.chat_window.document.createElement('div')
         App_constants.chat_window.document.body.children[0].children[0].appendChild(dummy_div);
         let msg_windowed = App_constants.chat_window.document.body.children[0].children[0];
