@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         stonehub_jvc
 // @namespace    http://tampermonkey.net/
-// @version      1.1.5
+// @version      1.2.0
 // @description  add some chat features : jvc stickers, jvc smileys and youtube videos directly integrated into Idlescape
 // @author       godi, weld, gamergeo, flo, jiggyjinjo
 // @include      *://*idlescape.com/game*
@@ -25,6 +25,7 @@ class App_constants {
     static chatbox = "";
     static chat_window = "";
     static event_listener = false;
+    static pseudo = "";
 
     static get_chat_message_container_box() {
         const index = Array.from(document.getElementsByClassName('chat-tab-channel')).findIndex((e) => e.innerText.includes('1825'));
@@ -166,12 +167,30 @@ class Stonehub_jvc {
             }
         }, 200);
 
+        setTimeout(() => {
+            var divPseudo = document.getElementsByClassName("navbar1-box left drawer-button noselect")[0];
+            App_constants.pseudo = divPseudo.textContent.substr(2);
+            var link = document.createElement('a');
+            link.setAttribute("href", "https://docs.google.com/document/d/1d6y-32BdIx1e1rCB89wnp3BWBwwTLJRbWsG06oN2Ags/edit");
+            link.setAttribute("target", "_blank");
+            var spantext = document.createElement('span');
+            spantext.setAttribute("style", "color:#54FF9F;text-shadow: 1px 1px 10px #39c70d;");
+            spantext.textContent = " | Guide de l'attardin ";
+            var drive_img = document.createElement('img');
+            drive_img.setAttribute("src",  "https://i.ibb.co/LYCtwqB/freechoco.png"); // "" https://i.ibb.co/37hFz0B/freechoco.png
+            drive_img.setAttribute("alt",  "Guide de l'attardin");
+            drive_img.setAttribute("height",  "25px");
+            divPseudo.appendChild(link);
+            link.appendChild(spantext);
+            link.appendChild(drive_img);
 
+        }, 2000)
 
         // launch jvc daemon
         setInterval(() => {
             try {
-                if(that.sockets.length > 0){that.jvc_main(that)};
+                if(that.sockets.length > 0){
+                    that.jvc_main(that)};
             } catch (e) {
                 that.error_handler(that, e);
             }
@@ -299,8 +318,10 @@ Stonehub_jvc.prototype.jvc_create_windowed_chat = function (that) {
         bHTML.innerHTML = App_constants.get_chat_message_container_box().innerHTML.replace(windowed_button,'');
         bHTML.innerHTML = bHTML.innerHTML.replace('<div class="chat-message-entry-char-count">500</div>','');
         bHTML.innerHTML = bHTML.innerHTML.replaceAll('src="images/' , 'src="https://idlescape.com/images/');
-        App_constants.chat_window.document.head.children[26].textContent = "Channel 1825 - L'élite de la nation";
-        App_constants.chat_window.document.head.children[34].textContent += '.chat-item { height: 22px;}'
+        App_constants.chat_window.document.head.getElementsByTagName('title')[0].text = "Channel 1825 - L'élite de la nation";
+        let item_css = App_constants.chat_window.document.createElement('style');
+        item_css.textContent = `.chat-item { height: 22px;}`;
+        App_constants.chat_window.document.head.appendChild(item_css);
         let dummy_div = App_constants.chat_window.document.createElement('div')
         App_constants.chat_window.document.body.children[0].children[0].appendChild(dummy_div);
         let msg_windowed = App_constants.chat_window.document.body.children[0].children[0];
@@ -324,12 +345,12 @@ Stonehub_jvc.prototype.jvc_create_windowed_chat = function (that) {
             msg = (msg.match(/^[0-9]+(\[.+)$/) || [])[1];
             let msg_parsed = JSON.parse(msg);
             if(msg_parsed[0]!=="send message" || msg_parsed[1]["channel_name"]!=="1825") { return;}
-            that.jvc_append_to_window(that, e)
+            that.jvc_append_to_window(that, e, msg_parsed)
         })};
     } catch (e) {console.log(e.message);}
 }
 
-Stonehub_jvc.prototype.jvc_append_to_window = function (that, e) {
+Stonehub_jvc.prototype.jvc_append_to_window = function (that, e, msg_parsed) {
     let msg_windowed = App_constants.chat_window.document.body.children[1].children[0];
     let node = App_constants.get_chat_message_container_box().children[0].children[0].lastChild;
     let new_msg = document.createElement('div');
@@ -337,6 +358,32 @@ Stonehub_jvc.prototype.jvc_append_to_window = function (that, e) {
     msg_windowed.insertBefore(new_msg, msg_windowed.firstChild);
     that.jvc_parse_smileys(new_msg);
     that.jvc_parse_stickers(new_msg);
+    var date = msg_parsed[1]['created_at']
+    var user = msg_parsed[1]['user_name']
+    var icon = msg_parsed[1]['icon']
+    var level = msg_parsed[1]['total_level']
+    var msg = msg_parsed[1]['message']
+    new_msg.children[0].children[0].children[0].textContent = "[" + date.substring(date.indexOf('T')+1,date.indexOf('.')) + "]";
+    new_msg.children[0].children[0].children[1].textContent = user;
+    new_msg.children[0].children[0].childNodes[2].textContent = "[" + level + "]:"
+    while(new_msg.children[0].childElementCount > 1){new_msg.children[0].lastChild.remove();}
+    let div_msg = App_constants.chat_window.document.createElement('span');
+    div_msg.textContent = msg;
+    new_msg.children[0].appendChild(div_msg);
+    if(icon !== ""){
+        let div_icon = App_constants.chat_window.document.createElement('img');
+        div_icon.setAttribute("class" , "message-username-icon");
+        div_icon.setAttribute("alt", "normal");
+        div_icon.setAttribute("src", "https://idlescape.com/images/chaticons/" + icon + ".png");
+        new_msg.children[0].children[0].children[1].insertBefore(div_icon, new_msg.children[0].children[0].children[1].firstChild);
+    }
+    that.jvc_parse_smileys(new_msg);
+    that.jvc_parse_stickers(new_msg);
+    if(msg.includes("@"+App_constants.pseudo)){
+        var audio = new Audio('https://raw.githubusercontent.com/geode-booster/stonehub_jvc/main/rsrc/notif.mp3');
+        audio.volume = 0.1;
+        audio.play();
+    }
 }
 
 try {
